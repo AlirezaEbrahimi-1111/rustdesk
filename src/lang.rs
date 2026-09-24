@@ -128,9 +128,16 @@ pub(crate) fn is_cjk_lang(lang_or_locale: &str) -> bool {
     matches!(lang.as_str(), "zh" | "ja" | "ko")
 }
 
+/// Language used when the user has not picked one ("Default" in settings),
+/// instead of following the OS locale.
+pub const DEFAULT_LANG: &str = "fa";
+
 fn resolve_lang(saved_lang: &str, locale: &str, cjk_fallback: bool) -> String {
-    let locale = locale.to_lowercase();
     let mut lang = saved_lang.to_lowercase();
+    if lang.is_empty() || lang == "default" {
+        return DEFAULT_LANG.to_owned();
+    }
+    let locale = locale.to_lowercase();
     if cjk_fallback && is_cjk_lang(&lang) {
         return "en".to_owned();
     }

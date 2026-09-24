@@ -3985,6 +3985,20 @@ bool get isCustomClient {
 }
 
 get defaultOptionLang => isCustomClient ? 'default' : '';
+
+// Keep in sync with DEFAULT_LANG in src/lang.rs.
+const kDefaultLang = 'fa';
+
+/// Locale for the app's language setting, so that layout direction follows it
+/// (RTL for Persian) instead of the OS locale.
+Locale appLocale() {
+  var lang = bind.mainGetLocalOption(key: kCommConfKeyLang).toLowerCase();
+  if (lang.isEmpty || lang == 'default') lang = kDefaultLang;
+  final parts = lang.split(RegExp('[-_]'));
+  return parts.length > 1
+      ? Locale(parts[0], parts[1].toUpperCase())
+      : Locale(parts[0]);
+}
 get defaultOptionTheme => isCustomClient ? 'system' : '';
 get defaultOptionYes => isCustomClient ? 'Y' : '';
 get defaultOptionNo => isCustomClient ? 'N' : '';
