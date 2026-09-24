@@ -348,6 +348,14 @@ jobs:
         run: |
           BASE_URL=${{ env.SIGN_BASE_URL }} SECRET_KEY=${{ secrets.SIGN_SECRET_KEY }} python3 res/job.py sign_files ./SignOutput
 
+      - name: Remove previous release
+        # Asset names repeat across builds (same VERSION), so start from a clean release.
+        if: env.UPLOAD_ARTIFACT == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release delete "${{ env.TAG_NAME }}" --cleanup-tag -y -R "${{ github.repository }}" || true
+
       - name: Publish Release
         uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v1
         if: env.UPLOAD_ARTIFACT == 'true'
